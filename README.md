@@ -1,29 +1,37 @@
--- 📁 LocalScript (StarterPlayerScripts hoặc executor)
+-- 📁 LocalScript (StarterPlayerScripts hoặc Executor)
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
-local char = player.Character or player.CharacterAdded:Wait()
-local hrp = char:WaitForChild("HumanoidRootPart")
-
--- ⚙️ Biến trạng thái
 local spinning = false
 local bav = nil
+local hrp = nil
 
--- 🔘 Toggle bằng phím Y
-UserInputService.InputBegan:Connect(function(input, gpe)
-	if gpe then return end
-	if input.KeyCode == Enum.KeyCode.Y then
+-- 🧍 Theo dõi nhân vật
+local function setupCharacter(char)
+	hrp = char:WaitForChild("HumanoidRootPart")
+end
+
+if player.Character then
+	setupCharacter(player.Character)
+end
+
+player.CharacterAdded:Connect(setupCharacter)
+
+-- 🎮 Bật/tắt lộn bằng phím Y
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+	if input.KeyCode == Enum.KeyCode.Y and hrp then
 		spinning = not spinning
 
 		if spinning then
 			print("✅ Flip ON")
 			bav = Instance.new("BodyAngularVelocity")
-			bav.AngularVelocity = Vector3.new(500, 0, 0) -- Lộn về phía trước cực nhanh
+			bav.Name = "XFlip"
+			bav.AngularVelocity = Vector3.new(500, 0, 0) -- Xoay cực nhanh quanh trục X
 			bav.MaxTorque = Vector3.new(math.huge, 0, 0)
 			bav.P = math.huge
-			bav.Name = "XFlip"
 			bav.Parent = hrp
 		else
 			print("❌ Flip OFF")
