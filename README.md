@@ -1,37 +1,60 @@
--- 📁 LocalScript (StarterPlayerScripts)
+-- 📁 LocalScript trong StarterPlayerScripts
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local hrp = character:WaitForChild("HumanoidRootPart")
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
 
--- 🔁 Gán lại khi respawn
-player.CharacterAdded:Connect(function(char)
-	character = char
+-- 🏁 Theo dõi lại khi nhân vật respawn
+player.CharacterAdded:Connect(function(newChar)
+	char = newChar
 	hrp = char:WaitForChild("HumanoidRootPart")
 end)
 
--- ⚙️ Cài đặt
-local radius = 6 -- Phạm vi phát hiện gần bạn
-local forceMagnitude = 5000 -- Độ mạnh của cú đẩy
+local isChasing = false
+local target = nil
+local speed = 200
+local offsetDirection = 1
 
--- 🔁 Kiểm tra liên tục
-RunService.Heartbeat:Connect(function()
-	for _, otherPlayer in ipairs(Players:GetPlayers()) do
-		if otherPlayer ~= player and otherPlayer.Character then
-			local otherHRP = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
-			if otherHRP and (hrp.Position - otherHRP.Position).Magnitude <= radius then
-				-- 🔀 Tạo lực đẩy ngẫu nhiên cực mạnh
-				local randomDirection = Vector3.new(
-					math.random(-100, 100),
-					math.random(50, 150),  -- đảm bảo có độ cao
-					math.random(-100, 100)
-			 ).Unit * forceMagnitude
-				
-				otherHRP.Velocity = randomDirection
+-- 🔁 Tìm người chơi gần nhất
+local function getNearestPlayer()
+	local closest = nil
+	local shortestDist = math.huge
+
+	for _, other in pairs(Players:GetPlayers()) do
+		if other ~= player and other.Character and other.Character:FindFirstChild("HumanoidRootPart") then
+			local dist = (other.Character.HumanoidRootPart.Position - hrp.Position).Magnitude
+			if dist < shortestDist then
+				shortestDist = dist
+				closest = other
 			end
 		end
 	end
+
+	return closest
+end
+
+-- ⌨️ Bật/tắt khi nhấn K
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+	if input.KeyCode == Enum.KeyCode.K then
+		isChasing = not isChasing
+		if isChasing then
+			target = getNearestPlayer()
+		else
+			target = nil
+		end
+	end
 end)
+
+-- 🚀 Di chuyển tới lui nhanh liên tục khi theo sát
+RunService.Heartbeat:Connect(function(dt)
+	if isChasing and target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+		local targetPos = target.Character.HumanoidRootPart.Position
+		local oscillation = math.sin(tick() * 10) * 10 -- lắc mạnh trái phải
+
+		local direction = (targetPos - hrp.Position).Unit
+		local moveDirection = direction + Vector3.new(oscillation, math.sin(tick() * 20) * 10, 0
