@@ -7,12 +7,17 @@ local UIS = game:GetService("UserInputService")
 -- 🔁 Theo dõi khi bị chết để respawn ngay lập tức
 health:GetPropertyChangedSignal("Value"):Connect(function()
     if health.Value <= 0 then
-        task.wait(0.1) -- đợi 1 chút để game kịp xử lý trạng thái chết
-        game.ReplicatedStorage.LoadCharacter:FireServer()
+        task.wait(0.1)
+        local loadChar = game.ReplicatedStorage:FindFirstChild("Events") and game.ReplicatedStorage.Events:FindFirstChild("LoadCharacter")
+        if loadChar then
+            loadChar:FireServer()
+        else
+            warn("⚠️ Không tìm thấy LoadCharacter trong ReplicatedStorage.Events")
+        end
     end
 end)
 
--- 🎯 Nhấn phím Y để tự giết bản thân
+-- 🎯 Nhấn Y để tự kill bản thân
 UIS.InputBegan:Connect(function(input, gpe)
     if gpe then return end
     if input.KeyCode == Enum.KeyCode.Y then
