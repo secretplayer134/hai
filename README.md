@@ -7,26 +7,27 @@ local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local hrp = character:WaitForChild("HumanoidRootPart")
 
--- 📦 Hàm tạo cầu thang
-local function createStair()
-	local startPos = hrp.Position + hrp.CFrame.LookVector * 10 -- cách người chơi 10 studs phía trước
+-- 📦 Hàm tạo khối dẹp
+local function createFlatBlock()
+	local part = Instance.new("Part")
+	part.Size = Vector3.new(10, 2, 10)
+	part.Anchored = true
+	part.Material = Enum.Material.SmoothPlastic
+	part.BrickColor = BrickColor.Gray()
+	part.Name = "FlatBlock"
 
-	for i = 0, 4 do -- 5 bậc
-		local step = Instance.new("Part")
-		step.Size = Vector3.new(5, 1, 5)
-		step.Anchored = true
-		step.Position = startPos + Vector3.new(0, i, i * 5)
-		step.Material = Enum.Material.SmoothPlastic
-		step.BrickColor = BrickColor.new("Really red")
-		step.Name = "StairStep"
-		step.Parent = workspace
-	end
+	-- Đặt phía trước mặt người chơi
+	local forward = hrp.CFrame.LookVector * 10
+	local position = hrp.Position + forward
+	part.Position = Vector3.new(position.X, hrp.Position.Y - 3, position.Z) -- đặt thấp hơn 3 stud cho vừa tầm
+
+	part.Parent = workspace
 end
 
--- 🎮 Phím nhấn L để tạo cầu thang
+-- 🎮 Phím L để tạo khối
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	if gameProcessed then return end
 	if input.KeyCode == Enum.KeyCode.L then
-		createStair()
+		createFlatBlock()
 	end
 end)
