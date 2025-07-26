@@ -1,62 +1,32 @@
+-- 📁 LocalScript (StarterPlayerScripts hoặc executor)
+
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
 
-local lp = Players.LocalPlayer
-local char = lp.Character or lp.CharacterAdded:Wait()
-local hrp = char:WaitForChild("HumanoidRootPart")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
 
-local flingPart = nil
-local flingOn = false
+-- 📦 Hàm tạo cầu thang
+local function createStair()
+	local startPos = hrp.Position + hrp.CFrame.LookVector * 10 -- cách người chơi 10 studs phía trước
 
--- 🧱 Tạo Part fling
-local function createFlingPart()
-	local part = Instance.new("Part")
-	part.Size = Vector3.new(5, 1, 5)
-	part.Anchored = false
-	part.CanCollide = true
-	part.Transparency = 1 -- Vô hình
-	part.Massless = true
-	part.Name = "FlingPart"
-	part.Position = hrp.Position
-	part.Parent = workspace
-
-	-- Gắn part vào HRP
-	local weld = Instance.new("WeldConstraint")
-	weld.Part0 = hrp
-	weld.Part1 = part
-	weld.Parent = part
-
-	-- Tạo vòng quay
-	local bav = Instance.new("BodyAngularVelocity")
-	bav.AngularVelocity = Vector3.new(0, 999999, 0)
-	bav.MaxTorque = Vector3.new(0, math.huge, 0)
-	bav.P = math.huge
-	bav.Parent = part
-
-	return part
+	for i = 0, 4 do -- 5 bậc
+		local step = Instance.new("Part")
+		step.Size = Vector3.new(5, 1, 5)
+		step.Anchored = true
+		step.Position = startPos + Vector3.new(0, i, i * 5)
+		step.Material = Enum.Material.SmoothPlastic
+		step.BrickColor = BrickColor.new("Really red")
+		step.Name = "StairStep"
+		step.Parent = workspace
+	end
 end
 
--- 🔘 Toggle fling với phím Y
-UserInputService.InputBegan:Connect(function(input, gpe)
-	if gpe then return end
-	if input.KeyCode == Enum.KeyCode.Y then
-		flingOn = not flingOn
-		if flingOn then
-			print("✅ Fling ON")
-			flingPart = createFlingPart()
-		else
-			print("❌ Fling OFF")
-			if flingPart then
-				flingPart:Destroy()
-				flingPart = nil
-			end
-		end
+-- 🎮 Phím nhấn L để tạo cầu thang
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+	if input.KeyCode == Enum.KeyCode.L then
+		createStair()
 	end
-end)
-
--- 🔁 Gắn lại nếu respawn
-lp.CharacterAdded:Connect(function(newChar)
-	char = newChar
-	hrp = char:WaitForChild("HumanoidRootPart")
 end)
