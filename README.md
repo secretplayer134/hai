@@ -1,29 +1,34 @@
-repeat task.wait() until game.Players.LocalPlayer and game.Players.LocalPlayer:FindFirstChild("NRPBS")
+-- ⚠️ XÓA TOÀN BỘ SCRIPT VÀ GUI BẠN ĐÃ EXECUTE ⚠️
+-- Sử dụng trên executor như Xeno
 
-local player = game.Players.LocalPlayer
-local health = player.NRPBS:WaitForChild("Health")
-local UIS = game:GetService("UserInputService")
-
--- 🔁 Theo dõi khi bị chết để respawn ngay lập tức
-health:GetPropertyChangedSignal("Value"):Connect(function()
-    if health.Value <= 0 then
-        task.wait(0.1)
-        local loadChar = game.ReplicatedStorage:FindFirstChild("Events") and game.ReplicatedStorage.Events:FindFirstChild("LoadCharacter")
-        if loadChar then
-            loadChar:FireServer()
-        else
-            warn("⚠️ Không tìm thấy LoadCharacter trong ReplicatedStorage.Events")
-        end
+for _, obj in ipairs(game:GetDescendants()) do
+    if obj:IsA("LocalScript") or obj:IsA("ModuleScript") or obj:IsA("Script") then
+        local success, result = pcall(function()
+            if not obj:IsDescendantOf(game:GetService("StarterPlayer"))
+            and not obj:IsDescendantOf(game:GetService("ReplicatedStorage"))
+            and not obj:IsDescendantOf(game:GetService("StarterGui"))
+            and not obj:IsDescendantOf(game:GetService("Players"))
+            and not obj:IsDescendantOf(game:GetService("Workspace")) then
+                obj:Destroy()
+            end
+        end)
     end
-end)
+end
 
--- 🎯 Nhấn Y để tự kill bản thân
-UIS.InputBegan:Connect(function(input, gpe)
-    if gpe then return end
-    if input.KeyCode == Enum.KeyCode.Y then
-        local char = player.Character
-        if char and char:FindFirstChild("Humanoid") then
-            char.Humanoid.Health = 0
+-- 🧼 Xóa GUI trong PlayerGui (nếu bạn có tạo GUI riêng)
+for _, gui in ipairs(game.Players.LocalPlayer:WaitForChild("PlayerGui"):GetChildren()) do
+    pcall(function()
+        if not gui:IsA("PlayerScript") and not gui:IsA("StarterGui") then
+            gui:Destroy()
         end
-    end
-end)
+    end)
+end
+
+-- 🛠️ Xóa tất cả Tool đang cầm (nếu dùng script fly/follow v.v.)
+for _, tool in ipairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+    pcall(function()
+        tool:Destroy()
+    end)
+end
+
+-- 💀 Nếu script vẫn bị loop, bạn cần rejoin game để clear hoàn toàn
