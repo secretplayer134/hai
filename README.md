@@ -1,44 +1,37 @@
--- 📁 LocalScript trong StarterPlayerScripts
+-- 📁 LocalScript (StarterPlayerScripts)
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
 local hrp = character:WaitForChild("HumanoidRootPart")
 
-local enabled = false
-local spinSpeed = 100000 -- tốc độ xoay (độ mỗi giây)
-local moveSpeed = 10000000 -- tốc độ di chuyển
-
--- 🔁 Đảm bảo nhân vật sẵn sàng
+-- 🔁 Gán lại khi respawn
 player.CharacterAdded:Connect(function(char)
 	character = char
-	humanoid = char:WaitForChild("Humanoid")
 	hrp = char:WaitForChild("HumanoidRootPart")
 end)
 
--- 🎮 Nhấn Y để bật/tắt
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
-	if input.KeyCode == Enum.KeyCode.Y then
-		enabled = not enabled
-		if enabled then
-			humanoid.WalkSpeed = moveSpeed
-			humanoid.AutoRotate = false
-		else
-			humanoid.WalkSpeed = 16
-			humanoid.AutoRotate = true
-		end
-	end
-end)
+-- ⚙️ Cài đặt
+local radius = 6 -- Phạm vi phát hiện gần bạn
+local forceMagnitude = 5000 -- Độ mạnh của cú đẩy
 
--- 🔁 Xoay vòng liên tục nếu bật
-RunService.RenderStepped:Connect(function(dt)
-	if enabled and hrp then
-		local rotation = CFrame.Angles(0, math.rad(spinSpeed * dt), 0)
-		hrp.CFrame = hrp.CFrame * rotation
+-- 🔁 Kiểm tra liên tục
+RunService.Heartbeat:Connect(function()
+	for _, otherPlayer in ipairs(Players:GetPlayers()) do
+		if otherPlayer ~= player and otherPlayer.Character then
+			local otherHRP = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
+			if otherHRP and (hrp.Position - otherHRP.Position).Magnitude <= radius then
+				-- 🔀 Tạo lực đẩy ngẫu nhiên cực mạnh
+				local randomDirection = Vector3.new(
+					math.random(-100, 100),
+					math.random(50, 150),  -- đảm bảo có độ cao
+					math.random(-100, 100)
+			 ).Unit * forceMagnitude
+				
+				otherHRP.Velocity = randomDirection
+			end
+		end
 	end
 end)
