@@ -1,44 +1,66 @@
--- 🧼 Script chỉ xóa những gì bạn đã inject qua executor
--- ⚠️ KHÔNG động vào GUI/systems mặc định của game
+-- 📁 LocalScript trong StarterPlayerScripts
 
-local lp = game.Players.LocalPlayer
-local whitelistServices = {
-    ["StarterPlayer"] = true,
-    ["StarterGui"] = true,
-    ["ReplicatedStorage"] = true,
-    ["ReplicatedFirst"] = true,
-    ["Workspace"] = true,
-    ["Lighting"] = true,
-    ["Players"] = true,
-    ["SoundService"] = true
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+local flying = false
+local flySpeed = 50
+local moveVector = Vector3.zero
+local direction = {
+	W = false,
+	A = false,
+	S = false,
+	D = false
 }
 
--- 🔍 Xóa script ngoài whitelist
-for _, v in ipairs(game:GetDescendants()) do
-    if (v:IsA("LocalScript") or v:IsA("ModuleScript") or v:IsA("Script")) then
-        local service = v:FindFirstAncestorWhichIsA("Service")
-        if service and not whitelistServices[service.Name] then
-            pcall(function()
-                v:Destroy()
-            end)
-        end
-    end
+-- 🛫 Hàm cập nhật hướng bay
+local function updateDirection()
+	moveVector = Vector3.zero
+	if direction.W then moveVector = moveVector + (workspace.CurrentCamera.CFrame.LookVector) end
+	if direction.S then moveVector = moveVector - (workspace.CurrentCamera.CFrame.LookVector) end
+	if direction.A then moveVector = moveVector - (workspace.CurrentCamera.CFrame.RightVector) end
+	if direction.D then moveVector = moveVector + (workspace.CurrentCamera.CFrame.RightVector) end
+	moveVector = moveVector.Unit * flySpeed
 end
 
--- 🧻 Xóa GUI không phải mặc định trong PlayerGui
-for _, gui in ipairs(lp:WaitForChild("PlayerGui"):GetChildren()) do
-    if not gui:IsA("PlayerScript") and not gui.Name:match("^%a+Gui$") then
-        pcall(function()
-            gui:Destroy()
-        end)
-    end
-end
+-- 🎮 Bắt phím
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
 
--- 🧺 Xóa Tool trong Backpack (nếu dùng script cho tool)
-for _, tool in ipairs(lp:FindFirstChild("Backpack"):GetChildren()) do
-    if tool:IsA("Tool") and not tool:FindFirstChildOfClass("Script") then
-        pcall(function()
-            tool:Destroy()
-        end)
-    end
-end
+	if input.KeyCode == Enum.KeyCode.R then
+		flying = not flying
+		if flying then
+			humanoidRootPart.Anchored = false
+		end
+	end
+
+	if input.KeyCode == Enum.KeyCode.W then direction.W = true end
+	if input.KeyCode == Enum.KeyCode.A then direction.A = true end
+	if input.KeyCode == Enum.KeyCode.S then direction.S = true end
+	if input.KeyCode == Enum.KeyCode.D then direction.D = true end
+	updateDirection()
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if input.KeyCode == Enum.KeyCode.W then direction.W = false end
+	if input.KeyCode == Enum.KeyCode.A then direction.A = false end
+	if input.KeyCode == Enum.KeyCode.S then direction.S = false end
+	if input.KeyCode == Enum.KeyCode.D then direction.D = false end
+	updateDirection()
+end)
+
+-- 🌀 Luôn cập nhật khi bay
+RunService.RenderStepped:Connect(function()
+	if flying then
+		if moveVector.Magnitude > 0 then
+			humanoidRootPart.Velocity = moveVector
+		else
+			humanoidRootPart.Velocity = Vector3.zero
+		end
+	end
+end)
