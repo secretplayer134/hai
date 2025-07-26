@@ -1,87 +1,76 @@
--- 📁 LocalScript (StarterPlayerScripts hoặc executor)
-
+-- 👤 LocalPlayer & Character
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 
-local player = Players.LocalPlayer
-local flingActive = false
-local invisClone = nil
-local hrp = nil
-local bt = nil
+local lp = Players.LocalPlayer
+local char = lp.Character or lp.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
 
--- 🔁 Hàm tạo invis fling character
-local function createInvisClone()
-	local character = player.Character
-	if not character then return end
+-- 🛠️ Làm nhân vật vô hình (trừ HumanoidRootPart)
+for _, part in pairs(char:GetDescendants()) do
+	if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+		part.Transparency = 1
+	elseif part:IsA("Decal") then
+		part:Destroy()
+	end
+end
 
-	hrp = character:FindFirstChild("HumanoidRootPart")
-	if not hrp then return end
+-- 📌 Tạo lực fling
+local bav = Instance.new("BodyAngularVelocity")
+bav.AngularVelocity = Vector3.new(0, 1000000, 0)
+bav.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+bav.P = math.huge
+bav.Parent = hrp
 
-	-- 🧱 Clone nhân vật để làm vật thể fling
-	invisClone = character:Clone()
-	invisClone.Name = "InvisFlingPart"
-	invisClone.Parent = workspace
+local bv = Instance.new("BodyVelocity")
+bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+bv.P = math.huge
+bv.Velocity = Vector3.new(0, 0, 0)
+bv.Parent = hrp
 
-	-- 🧍‍♂️ Gỡ humanoid để clone không bị reset
-	local hum = invisClone:FindFirstChildOfClass("Humanoid")
-	if hum then hum:Destroy() end
-
-	-- 🪞 Làm clone vô hình
-	for _, part in ipairs(invisClone:GetDescendants()) do
-		if part:IsA("BasePart") then
-			part.Anchored = false
-			part.CanCollide = true
-			part.Transparency = 1
+-- 🔄 Theo người gần nhất
+local function getClosestPlayer()
+	local closest = nil
+	local shortest = math.huge
+	for _, plr in pairs(Players:GetPlayers()) do
+		if plr ~= lp and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+			local distance = (plr.Character.HumanoidRootPart.Position - hrp.Position).Magnitude
+			if distance < shortest then
+				shortest = distance
+				closest = plr
+			end
 		end
 	end
-
-	local cloneHRP = invisClone:FindFirstChild("HumanoidRootPart")
-	if not cloneHRP then return end
-
-	-- ⚡ Tạo lực cực mạnh
-	bt = Instance.new("BodyThrust")
-	bt.Force = Vector3.new(999999, 999999, 999999)
-	bt.Location = cloneHRP.Position
-	bt.Parent = cloneHRP
-
-	-- 🔁 Di chuyển clone theo bạn và xoay vòng
-	RunService.Heartbeat:Connect(function()
-		if flingActive and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-			local realHRP = player.Character.HumanoidRootPart
-			cloneHRP.CFrame = realHRP.CFrame * CFrame.new(0, 0, 0) * CFrame.Angles(0, math.rad(tick() * 1000), 0)
-		end
-	end)
+	return closest
 end
 
--- ✅ Bật invis fling
-local function enableInvisFling()
-	if flingActive then return end
-	createInvisClone()
-	flingActive = true
-end
+-- 🟢 Toggle fling bằng phím Y
+local flingEnabled = false
+local flingLoop
 
--- ❌ Tắt invis fling
-local function disableInvisFling()
-	if invisClone then invisClone:Destroy() invisClone = nil end
-	if bt then bt:Destroy() bt = nil end
-	flingActive = false
-end
-
--- ⌨️ Nhấn Y để bật/tắt
-UserInputService.InputBegan:Connect(function(input, gpe)
-	if gpe then return end
+UserInputService.InputBegan:Connect(function(input, processed)
+	if processed then return end
 	if input.KeyCode == Enum.KeyCode.Y then
-		if flingActive then
-			disableInvisFling()
+		flingEnabled = not flingEnabled
+		if flingEnabled then
+			print("✅ Fling ON")
+			flingLoop = RunService.RenderStepped:Connect(function()
+				local target = getClosestPlayer()
+				if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+					local targetHRP = target.Character.HumanoidRootPart
+					-- Di chuyển nhân vật của bạn đến vị trí target
+					hrp.CFrame = targetHRP.CFrame
+					bv.Velocity = Vector3.new(1e5, 1e5, 1e5)
+				end
+			end)
 		else
-			enableInvisFling()
+			print("❌ Fling OFF")
+			if flingLoop then
+				flingLoop:Disconnect()
+				flingLoop = nil
+			end
+			bv.Velocity = Vector3.new(0, 0, 0)
 		end
 	end
-end)
-
--- 🔁 Reset thì dừng fling
-player.CharacterAdded:Connect(function()
-	wait(1)
-	disableInvisFling()
 end)
