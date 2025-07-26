@@ -1,4 +1,4 @@
--- 📁 LocalScript (StarterPlayerScripts)
+-- 📁 LocalScript trong StarterPlayerScripts
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -6,36 +6,39 @@ local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
 local hrp = character:WaitForChild("HumanoidRootPart")
 
-local flyingInCircle = false
-local angle = 0
-local radius = 10 -- bán kính vòng tròn
-local speed = 100 -- tốc độ quay (cực nhanh)
-local heightOffset = 10 -- độ cao khi quay vòng
+local enabled = false
+local spinSpeed = 100000 -- tốc độ xoay (độ mỗi giây)
+local moveSpeed = 10000000 -- tốc độ di chuyển
 
--- 📌 Gốc toạ độ trung tâm (gốc quay)
-local centerPosition = hrp.Position
+-- 🔁 Đảm bảo nhân vật sẵn sàng
+player.CharacterAdded:Connect(function(char)
+	character = char
+	humanoid = char:WaitForChild("Humanoid")
+	hrp = char:WaitForChild("HumanoidRootPart")
+end)
 
--- 🎮 Bật/tắt bằng phím Y
-UserInputService.InputBegan:Connect(function(input, gp)
-	if gp then return end
+-- 🎮 Nhấn Y để bật/tắt
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
 	if input.KeyCode == Enum.KeyCode.Y then
-		flyingInCircle = not flyingInCircle
-		if flyingInCircle then
-			centerPosition = hrp.Position
+		enabled = not enabled
+		if enabled then
+			humanoid.WalkSpeed = moveSpeed
+			humanoid.AutoRotate = false
+		else
+			humanoid.WalkSpeed = 16
+			humanoid.AutoRotate = true
 		end
 	end
 end)
 
--- 🌀 Vòng lặp bay theo hình tròn
+-- 🔁 Xoay vòng liên tục nếu bật
 RunService.RenderStepped:Connect(function(dt)
-	if flyingInCircle then
-		angle += dt * speed
-		local x = math.cos(angle) * radius
-		local z = math.sin(angle) * radius
-		local y = heightOffset
-		hrp.Velocity = Vector3.new(0, 0, 0) -- reset velocity
-		hrp.CFrame = CFrame.new(centerPosition + Vector3.new(x, y, z), centerPosition)
+	if enabled and hrp then
+		local rotation = CFrame.Angles(0, math.rad(spinSpeed * dt), 0)
+		hrp.CFrame = hrp.CFrame * rotation
 	end
 end)
