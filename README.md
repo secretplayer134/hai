@@ -4,30 +4,33 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local hrp = character:WaitForChild("HumanoidRootPart")
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
 
--- 📦 Hàm tạo khối dẹp
-local function createFlatBlock()
-	local part = Instance.new("Part")
-	part.Size = Vector3.new(10, 2, 10)
-	part.Anchored = true
-	part.Material = Enum.Material.SmoothPlastic
-	part.BrickColor = BrickColor.Gray()
-	part.Name = "FlatBlock"
+-- ⚙️ Biến trạng thái
+local spinning = false
+local bav = nil
 
-	-- Đặt phía trước mặt người chơi
-	local forward = hrp.CFrame.LookVector * 10
-	local position = hrp.Position + forward
-	part.Position = Vector3.new(position.X, hrp.Position.Y - 3, position.Z) -- đặt thấp hơn 3 stud cho vừa tầm
+-- 🔘 Toggle bằng phím Y
+UserInputService.InputBegan:Connect(function(input, gpe)
+	if gpe then return end
+	if input.KeyCode == Enum.KeyCode.Y then
+		spinning = not spinning
 
-	part.Parent = workspace
-end
-
--- 🎮 Phím L để tạo khối
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
-	if input.KeyCode == Enum.KeyCode.L then
-		createFlatBlock()
+		if spinning then
+			print("✅ Flip ON")
+			bav = Instance.new("BodyAngularVelocity")
+			bav.AngularVelocity = Vector3.new(500, 0, 0) -- Lộn về phía trước cực nhanh
+			bav.MaxTorque = Vector3.new(math.huge, 0, 0)
+			bav.P = math.huge
+			bav.Name = "XFlip"
+			bav.Parent = hrp
+		else
+			print("❌ Flip OFF")
+			if bav then
+				bav:Destroy()
+				bav = nil
+			end
+		end
 	end
 end)
