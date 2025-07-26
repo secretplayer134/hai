@@ -1,44 +1,51 @@
--- 📁 LocalScript (StarterPlayerScripts hoặc Executor)
-
+-- ⚠️ NGUY HIỂM: Không chạy nếu không sẵn sàng mất kết nối hoặc lag nặng
+local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
-local spinning = false
-local bav = nil
-local hrp = nil
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
 
--- 🧍 Theo dõi nhân vật
-local function setupCharacter(char)
-	hrp = char:WaitForChild("HumanoidRootPart")
-end
+-- Thông số
+local partsPerSecond = 100000
+local totalCycles = 10000000
+local size = Vector3.new(10, 10, 10)
+local running = true
 
-if player.Character then
-	setupCharacter(player.Character)
-end
-
-player.CharacterAdded:Connect(setupCharacter)
-
--- 🎮 Bật/tắt lộn bằng phím Y
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
-	if input.KeyCode == Enum.KeyCode.Y and hrp then
-		spinning = not spinning
-
-		if spinning then
-			print("✅ Flip ON")
-			bav = Instance.new("BodyAngularVelocity")
-			bav.Name = "XFlip"
-			bav.AngularVelocity = Vector3.new(500, 0, 0) -- Xoay cực nhanh quanh trục X
-			bav.MaxTorque = Vector3.new(math.huge, 0, 0)
-			bav.P = math.huge
-			bav.Parent = hrp
-		else
-			print("❌ Flip OFF")
-			if bav then
-				bav:Destroy()
-				bav = nil
-			end
-		end
+-- 🛑 Dừng lại nếu nhấn ESC
+UserInputService.InputBegan:Connect(function(input, gpe)
+	if input.KeyCode == Enum.KeyCode.Escape then
+		running = false
 	end
 end)
+
+-- Hàm tạo khối màu ngẫu nhiên
+local function spawnRandomPart(position)
+	local part = Instance.new("Part")
+	part.Size = size
+	part.Anchored = true
+	part.Position = position
+	part.Color = Color3.new(math.random(), math.random(), math.random()) -- màu ngẫu nhiên
+	part.Material = Enum.Material.SmoothPlastic
+	part.Parent = workspace
+end
+
+-- Tạo cực nhiều khối mỗi giây
+coroutine.wrap(function()
+	for cycle = 1, totalCycles do
+		if not running then break end
+
+		for i = 1, partsPerSecond do
+			local offset = Vector3.new(
+				math.random(-100, 100),
+				math.random(5, 100),
+				math.random(-100, 100)
+			)
+			local pos = hrp.Position + offset
+			spawnRandomPart(pos)
+		end
+
+		task.wait(1) -- mỗi giây
+	end
+end)()
