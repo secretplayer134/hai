@@ -1,100 +1,203 @@
--- 📁 Dán vào Executor rồi Execute
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local CoreGui = game:GetService("CoreGui")
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+local flying = false
+local flySpeed = 100
+local followDistance = 2
+local following = false
+local currentTarget = nil
+local noclipEnabled = false
+local vToggled = false
 
--- Giao diện đơn giản
-local ScreenGui = Instance.new("ScreenGui", CoreGui)
-ScreenGui.Name = "RemoteSpammer"
+player.CameraMaxZoomDistance = 1e9
+player.CameraMinZoomDistance = 0.5
 
-local Frame = Instance.new("Frame", ScreenGui)
-Frame.Position = UDim2.new(0.05, 0, 0.3, 0)
-Frame.Size = UDim2.new(0, 300, 0, 300)
-Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Frame.BorderSizePixel = 0
+local teleportLocations = {
+    V1 = Vector3.new(10000, 0, 0),
+    V2 = Vector3.new(100, 442, -10)
+}
 
-local Title = Instance.new("TextLabel", Frame)
-Title.Size = UDim2.new(1, 0, 0, 30)
-Title.Text = "🔧 Remote Spammer"
-Title.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-Title.TextColor3 = Color3.new(1, 1, 1)
-Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 18
+local bg, bv, flyConn
+local function createFlyParts(hrp)
+    bg = Instance.new("BodyGyro")
+    bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+    bg.P = 10000
+    bg.CFrame = hrp.CFrame
+    bg.Parent = hrp
 
-local DropDown = Instance.new("TextBox", Frame)
-DropDown.PlaceholderText = "🔎 Nhập tên Remote hoặc để trống spam hết"
-DropDown.Size = UDim2.new(1, -20, 0, 30)
-DropDown.Position = UDim2.new(0, 10, 0, 40)
-DropDown.Text = ""
-DropDown.TextColor3 = Color3.new(1,1,1)
-DropDown.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    bv = Instance.new("BodyVelocity")
+    bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+    bv.Velocity = Vector3.new(0, 0, 0)
+    bv.Parent = hrp
+end
 
-local SpeedBox = Instance.new("TextBox", Frame)
-SpeedBox.PlaceholderText = "⏱️ Tốc độ (VD: 1000)"
-SpeedBox.Size = UDim2.new(1, -20, 0, 30)
-SpeedBox.Position = UDim2.new(0, 10, 0, 80)
-SpeedBox.Text = "1000"
-SpeedBox.TextColor3 = Color3.new(1,1,1)
-SpeedBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+local function startFlying()
+    if flying then return end
+    flying = true
+    local character = player.Character or player.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
+    createFlyParts(hrp)
+    flyConn = RunService.RenderStepped:Connect(function()
+        if not flying then return end
+        local cam = workspace.CurrentCamera
+        bg.CFrame = cam.CFrame
+        bv.Velocity = cam.CFrame.LookVector * flySpeed
+    end)
+end
 
-local ToggleButton = Instance.new("TextButton", Frame)
-ToggleButton.Text = "▶️ BẮT ĐẦU"
-ToggleButton.Size = UDim2.new(1, -20, 0, 40)
-ToggleButton.Position = UDim2.new(0, 10, 0, 130)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 127)
-ToggleButton.TextColor3 = Color3.new(1, 1, 1)
-ToggleButton.Font = Enum.Font.SourceSansBold
-ToggleButton.TextSize = 20
+local function stopFlying()
+    flying = false
+    if flyConn then flyConn:Disconnect() end
+    if bg then bg:Destroy() end
+    if bv then bv:Destroy() end
+end
 
-local Status = Instance.new("TextLabel", Frame)
-Status.Position = UDim2.new(0, 10, 0, 180)
-Status.Size = UDim2.new(1, -20, 0, 100)
-Status.TextWrapped = true
-Status.TextYAlignment = Enum.TextYAlignment.Top
-Status.BackgroundTransparency = 1
-Status.TextColor3 = Color3.fromRGB(200, 200, 200)
-Status.Text = "🕵️ Đang chờ bạn nhấn BẮT ĐẦU"
-Status.Font = Enum.Font.SourceSans
-Status.TextSize = 16
+local function getClosestPlayerInSight()
+    local camera = workspace.CurrentCamera
+    local closestPlayer, smallestAngle = nil, math.huge
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            local hrp = p.Character.HumanoidRootPart
+            local angle = math.acos(camera.CFrame.LookVector:Dot((hrp.Position - camera.CFrame.Position).Unit))
+            if angle < math.rad(30) and angle < smallestAngle then
+                smallestAngle = angle
+                closestPlayer = p
+            end
+        end
+    end
+    return closestPlayer
+end
 
--- Tìm remote
-local allRemotes = {}
-for _, v in pairs(ReplicatedStorage:GetDescendants()) do
-    if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
-        table.insert(allRemotes, v)
+RunService.RenderStepped:Connect(function()
+    if following and currentTarget and currentTarget.Character then
+        local hrp = currentTarget.Character:FindFirstChild("HumanoidRootPart")
+        local myHRP = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+        if hrp and myHRP then
+            myHRP.CFrame = CFrame.new(hrp.Position - hrp.CFrame.LookVector * followDistance, hrp.Position)
+        end
+    end
+end)
+
+local function teleportToMouse()
+    local char = player.Character
+    if char and mouse.Hit then
+        char.HumanoidRootPart.CFrame = CFrame.new(mouse.Hit.p + Vector3.new(0,3,0))
     end
 end
 
-local running = false
-
-ToggleButton.MouseButton1Click:Connect(function()
-    running = not running
-    ToggleButton.Text = running and "⏸️ DỪNG" or "▶️ BẮT ĐẦU"
-    ToggleButton.BackgroundColor3 = running and Color3.fromRGB(170, 0, 0) or Color3.fromRGB(0, 170, 127)
-    if running then
-        task.spawn(function()
-            local targetName = DropDown.Text
-            local speed = tonumber(SpeedBox.Text) or 1000
-            Status.Text = "🚀 Đang spam " .. speed .. " lần/giây..."
-            while running do
-                for _, remote in pairs(allRemotes) do
-                    if targetName == "" or remote.Name:lower():find(targetName:lower()) then
-                        for i = 1, speed do
-                            task.spawn(function()
-                                pcall(function()
-                                    if remote:IsA("RemoteEvent") then
-                                        remote:FireServer("spam", math.random(), true, nil)
-                                    elseif remote:IsA("RemoteFunction") then
-                                        remote:InvokeServer("spam", math.random(), false)
-                                    end
-                                end)
-                            end)
-                        end
-                    end
-                end
-                wait(1)
+local noclipConn
+local function setNoclip(state)
+    noclipEnabled = state
+    if noclipConn then noclipConn:Disconnect() end
+    if noclipEnabled then
+        noclipConn = RunService.Stepped:Connect(function()
+            for _, v in pairs((player.Character or {}):GetDescendants()) do
+                if v:IsA("BasePart") then v.CanCollide = false end
             end
-            Status.Text = "⏸️ Đã dừng spam"
         end)
+    end
+end
+
+---------------------------------------------------------------------------
+-- GUI + CHECKBOX HỆ THỐNG
+---------------------------------------------------------------------------
+
+local HotkeyEnabled = {
+    E = true,
+    R = true,
+    T = true,
+    Y = true,
+    V = true,
+    RightShift = true
+}
+
+local function createGUI()
+    local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+    gui.Name = "FlyMenuGui"
+    gui.ResetOnSpawn = false
+
+    local frame = Instance.new("Frame", gui)
+    frame.Size = UDim2.new(0, 330, 0, 420)
+    frame.Position = UDim2.new(1, -330, 0, 242)
+    frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+
+    local function label(text, y)
+        local lbl = Instance.new("TextLabel", frame)
+        lbl.Size = UDim2.new(1, -40, 0, 25)
+        lbl.Position = UDim2.new(0, 5, 0, y)
+        lbl.BackgroundTransparency = 1
+        lbl.TextColor3 = Color3.new(1,1,1)
+        lbl.Font = Enum.Font.Gotham
+        lbl.TextSize = 14
+        lbl.TextXAlignment = Enum.TextXAlignment.Left
+        lbl.Text = text
+        return lbl
+    end
+
+    local function checkbox(key, y)
+        local box = Instance.new("TextButton", frame)
+        box.Size = UDim2.new(0, 20, 0, 20)
+        box.Position = UDim2.new(0, 300, 0, y + 2)
+        box.BackgroundColor3 = Color3.fromRGB(60,60,60)
+        box.Font = Enum.Font.GothamBold
+        box.TextSize = 16
+        box.TextColor3 = Color3.fromRGB(255,255,255)
+        box.Text = "✔"
+        box.MouseButton1Click:Connect(function()
+            HotkeyEnabled[key] = not HotkeyEnabled[key]
+            box.Text = HotkeyEnabled[key] and "✔" or ""
+        end)
+    end
+
+    local Y = 5
+    label("E to follow", Y) checkbox("E", Y)
+    Y += 30
+    label("R to fly", Y) checkbox("R", Y)
+    Y += 30
+    label("T to turn on/off noclip ", Y) checkbox("T", Y)
+    Y += 30
+    label("Y to teleport", Y) checkbox("Y", Y)
+    Y += 30
+    label("V tp to void, V again tp to ground (For TSB)", Y) checkbox("V", Y)
+    Y += 30
+    label("RightShift to turn on/off menu", Y) checkbox("RightShift", Y)
+
+end
+
+createGUI()
+
+---------------------------------------------------------------------------
+-- INPUT HOTKEY TỰ ĐỘNG CHECK CHECKBOX TRƯỚC
+---------------------------------------------------------------------------
+
+UserInputService.InputBegan:Connect(function(input, gp)
+    if gp then return end
+
+    if input.KeyCode == Enum.KeyCode.R and HotkeyEnabled.R then
+        flying = not flying
+        (flying and startFlying or stopFlying)()
+
+    elseif input.KeyCode == Enum.KeyCode.V and HotkeyEnabled.V then
+        local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            if not vToggled then hrp.CFrame = CFrame.new(teleportLocations.V1) else hrp.CFrame = CFrame.new(teleportLocations.V2) end
+            vToggled = not vToggled
+        end
+
+    elseif input.KeyCode == Enum.KeyCode.Y and HotkeyEnabled.Y then
+        teleportToMouse()
+
+    elseif input.KeyCode == Enum.KeyCode.T and HotkeyEnabled.T then
+        setNoclip(not noclipEnabled)
+
+    elseif input.KeyCode == Enum.KeyCode.E and HotkeyEnabled.E then
+        if not following then currentTarget = getClosestPlayerInSight() following = currentTarget ~= nil else following = false currentTarget = nil end
+
+    elseif input.KeyCode == Enum.KeyCode.RightShift and HotkeyEnabled.RightShift then
+        local g = player.PlayerGui:FindFirstChild("FlyMenuGui")
+        if g then g.Frame.Visible = not g.Frame.Visible end
     end
 end)
